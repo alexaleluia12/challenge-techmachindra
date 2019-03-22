@@ -2,8 +2,9 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 
-const config = require('./config.json');
+const config = require('./config.js');
 const api = require('./api');
+const Database = require('./model/db');
 
 /**
  * To difine middlware to application pass then to middlewares Array
@@ -31,7 +32,11 @@ module.exports = function appBuilder(middlewares) {
 
   // router middleware
   // shoud be the last middleware
-  app.use(config.prefix, api(config, null));
+  app.use(config.prefix, api());
 
-  return app;
+  const db = new Database();
+
+  return db.startConnection()
+    .then(() => app)
+    .catch((err) => { throw err; });
 };
