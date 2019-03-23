@@ -37,6 +37,11 @@ module.exports = function appBuilder(middlewares) {
   const db = new Database();
 
   return db.startConnection()
-    .then(() => app)
+    .then(() => {
+      // add property express application
+      // able to access on request handlers (req.app.deps)
+      app.deps = { db };
+      return app;
+    })
     .catch((err) => { throw err; });
 };
