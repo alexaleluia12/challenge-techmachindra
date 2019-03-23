@@ -7,6 +7,7 @@
 - manager key/jwt expiration
 - fix all lint messages
 - better test case, clean database for each test
+- test coverage 100%
 
 # Run
 ```sh

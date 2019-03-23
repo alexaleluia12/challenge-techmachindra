@@ -37,23 +37,6 @@ describe('utils functions', () => {
 });
 
 describe('integration test', () => {
-  describe('GET /hello', () => {
-    it('shoud return "world"', (done) => {
-      appBuilder()
-        .then(app => {
-          request(app.listen())
-            .get('/sky/v1/hello')
-            .expect(200, { message: 'world' })
-            .end((err) => {
-              if (err)
-                return done(err);
-              done();
-            });
-        })
-        .catch(err => done(err));
-    });
-  });
-
   describe('POST /user/signup', () => {
     it('shoud create and return a user', (done) => {
       appBuilder()
