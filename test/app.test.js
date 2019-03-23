@@ -76,5 +76,64 @@ describe('integration test', () => {
         .catch(err => done(err));
     });
   });
+
+  describe('POST /user/signin', () => {
+    it('shoud signin the user from email/password', (done) => {
+      appBuilder()
+        .then(app => {
+          request(app.listen())
+            .post('/sky/v1/user/signin')
+            .send({ email: fakeUser.email, senha: fakeUser.senha })
+            .end((err, res) => {
+              if (err)
+                return done(err);
+              expect(res.statusCode).to.equal(200);
+              expect(res.body)
+                .to.have.all.keys(
+                  'id', 'nome', 'email', 'senha', 'telefones', 'data_criacao',
+                  'data_atualizacao', 'ultimo_login', 'token',
+                );
+              done();
+            });
+        })
+        .catch(err => done(err));
+    });
+
+    it('shoud return 404 from wrong email', (done) => {
+      appBuilder()
+        .then(app => {
+          request(app.listen())
+            .post('/sky/v1/user/signin')
+            .send({ email: fakeUser.email + 'A', senha: fakeUser.senha })
+            .end((err, res) => {
+              if (err)
+                return done(err);
+              expect(res.statusCode).to.equal(404);
+              expect(res.body).to.eql({ mensagem: 'Usuário e/ou senha inválidos' });
+              done();
+            });
+        })
+        .catch(err => done(err));
+    });
+
+    it('shoud return 401 from wrong password', (done) => {
+      appBuilder()
+        .then(app => {
+          request(app.listen())
+            .post('/sky/v1/user/signin')
+            .send({ email: fakeUser.email, senha: fakeUser.senha + 'A' })
+            .end((err, res) => {
+              if (err)
+                return done(err);
+              expect(res.statusCode).to.equal(401);
+              expect(res.body).to.eql({ mensagem: 'Usuário e/ou senha inválidos' });
+              done();
+            });
+        })
+        .catch(err => done(err));
+    });
+
+  });
+
 });
 
