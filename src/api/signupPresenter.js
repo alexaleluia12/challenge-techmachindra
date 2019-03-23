@@ -7,5 +7,8 @@ module.exports = function signupPresenter(userModel, userInput) {
   const joinUser = Object.assign({}, userModel);
   joinUser.senha = userInput.senha;
 
+  delete joinUser.__v;
+  delete joinUser._id;
+
   return joinUser;
 };
