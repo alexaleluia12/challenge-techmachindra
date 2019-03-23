@@ -1,5 +1,3 @@
-const assert = require('assert');
-
 const request = require('supertest');
 const chai = require('chai');
 
@@ -12,28 +10,36 @@ const expect = chai.expect;
 // this is not the best way to test
 const fakeUser = {
   "nome": "Alex Dias",
-  "email": "alex" + Math.floor(Math.random() * 1000) + "@gmail.com",
+  "email": "alex" + Math.floor(Math.random() * 10000) + "@gmail.com",
   "senha": "pass1234",
   "telefones": [
     {
-      "numero": "987402245",
+      "numero": "987209245",
       "ddd": "19"
     }
   ]
 };
 
 describe('utils functions', () => {
-  describe('#add()', () => {
-    it('should return 2', () => {
-      assert.equal(utils.add(1, 1), 2);
+  describe('generate error message - #errorOutput()', () => {
+    it('should return an object', () => {
+      expect(utils.errorOutput('code is 123')).to.eql({ mensagem: 'code is 123' });
     });
   });
 
-  describe('generate error message - #errorOutput', () => {
-    it('should return an object', () => {
-      assert.deepEqual(utils.errorOutput('code is 123'), { mensagem: 'code is 123' });
-    })
-  })
+  describe('extract token from Authentication value - #extractToken()', () => {
+    it('should return the token', () => {
+      const token = '389388Secret28822'
+      const bearerToken = 'Bearer ' + token;
+      expect(utils.extractToken(bearerToken)).to.equal(token);
+    });
+
+    it('should throw an Error', () => {
+      const token = '389388Secret28822'
+      const bearerToken = 'BeareR ' + token;
+      expect(utils.extractToken.bind(utils, bearerToken)).to.throw('Bad token format value');
+    });
+  });
 });
 
 describe('integration test', () => {
@@ -115,7 +121,34 @@ describe('integration test', () => {
         })
         .catch(err => done(err));
     });
+  });
 
+  describe('GET /user/:user_id', () => {
+    it('seach an user after signin', (done) => {
+      appBuilder()
+        .then(app => {
+          const server = app.listen();
+          request(server)
+            .post('/sky/v1/user/signin')
+            .send({ email: fakeUser.email, senha: fakeUser.senha })
+            .end((err, res) => {
+              if (err)
+                return done(err);
+              expect(res.statusCode).to.equal(200);
+              // require signin to get token and id
+              request(server)
+                .get('/sky/v1/user/' + res.body.id)
+                .set('Authorization', 'Bearer ' + res.body.token)
+                .end((err, res) => {
+                  if (err)
+                    return done(err);
+                  expect(res.statusCode).to.equal(200);
+                  done();
+                });
+            });
+        })
+        .catch(err => done(err));
+    });
   });
 
 });
