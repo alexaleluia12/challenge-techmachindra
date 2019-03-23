@@ -3,7 +3,7 @@ const bcrypt = require('bcrypt');
 
 const UserModel = require('../model/user');
 const utils = require('../lib/utils');
-const signupPresenter = require('./signupPresenter');
+const userPresenter = require('./userPresenter');
 const { UserSignIn } = require('../model/inputSchema');
 
 module.exports = (req, res) => {
@@ -31,7 +31,7 @@ module.exports = (req, res) => {
                 user.data_atualizacao = now;
 
                 return user.save()
-                  .then(updatedUser => res.send(signupPresenter(updatedUser._doc, validInput)))
+                  .then(updatedUser => res.send(userPresenter(updatedUser._doc, validInput)))
                   .catch((err) => { throw err; });
               }
               return res.status(401).send(utils.errorOutput(msgErrorEmailPassword));

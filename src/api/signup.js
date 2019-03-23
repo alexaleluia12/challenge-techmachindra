@@ -8,7 +8,7 @@ const jwt = require('jsonwebtoken');
 const UserModel = require('../model/user');
 const utils = require('../lib/utils');
 const config = require('../config.js');
-const signupPresenter = require('./signupPresenter');
+const userPresenter = require('./userPresenter');
 const { UserSignUp } = require('../model/inputSchema');
 
 /**
@@ -92,7 +92,7 @@ module.exports = (req, res) => {
               const user = new UserModel(newUserData);
 
               return user.save()
-                .then(() => res.send(signupPresenter(newUserData, signup)))
+                .then(() => res.send(userPresenter(newUserData, signup)))
                 .catch((err) => { throw err; });
             })
             .catch((err) => { throw err; });
