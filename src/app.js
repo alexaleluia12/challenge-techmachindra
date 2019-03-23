@@ -5,6 +5,7 @@ const cors = require('cors');
 const config = require('./config.js');
 const api = require('./api');
 const Database = require('./model/db');
+const utils = require('./lib/utils');
 
 /**
  * To difine middlware to application pass then to middlewares Array
@@ -33,6 +34,11 @@ module.exports = function appBuilder(middlewares) {
   // router middleware
   // shoud be the last middleware
   app.use(config.prefix, api());
+
+  // default route
+  app.use((req, res) => {
+    res.status(404).send(utils.errorOutput('Not Found'));
+  });
 
   const db = new Database();
 
